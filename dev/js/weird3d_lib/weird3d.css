@@ -1,0 +1,4 @@
+X3D, x3d { border: none; }
+
+.container_3d {margin:auto;text-align:center;cursor:pointer;cursor:-webkit-grab;cursor:grab;}
+.container_3d_mousedown {cursor:-webkit-grabbing;cursor:grabbing;}
