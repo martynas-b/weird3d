@@ -11,7 +11,7 @@ Skull.Environment = function (opt) {
 	//var d2r = Math.PI / 180;
 	var skull = null;
 
-	//var clock = new THREE.Clock();
+	var clock = new THREE.Clock();
 	
 	function init (opt) {
 		self.options = {fullscreen: true};
