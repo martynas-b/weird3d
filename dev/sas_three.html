@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js collada</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #000000;
+				margin: 0px;
+				overflow: hidden;
+			}
+
+			#info {
+				color: #fff;
+				position: absolute;
+				top: 10px;
+				width: 100%;
+				text-align: center;
+				z-index: 100;
+				display:block;
+
+			}
+
+			a { color: skyblue }
+		</style>
+	</head>
+	<body>
+		<div id="container_3d"/>
+		<script src="js/lib/three/build/three.min.js"></script>
+
+		<script src="js/lib/three/examples/js/loaders/ColladaLoader.js"></script>
+
+		<script src="js/lib/three/examples/js/Detector.js"></script>
+		
+		<!--<script src="js/lib/three/examples/js/controls/OrbitControls.js"></script>-->
+		<!--<script src="js/libs/stats.min.js"></script>-->
+		
+		<script src="js/sas.js"></script>
+		
+		<script>start3d()</script>
+	</body>
+</html>

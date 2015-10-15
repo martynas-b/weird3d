@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Map chart</title>
+		<meta charset="utf-8">
+		<style>
+			body { margin: 0; background-color:#FFFFFF; overflow-x: hidden; overflow-y: auto;}
+		</style>
+		
+		<script src="js/lib/jquery-2.1.3.min.js"></script>
+		<script src="js/lib/proj4.js"></script>
+		
+		<script src="http://threejs.org/build/three.min.js"></script>
+		<script src="http://threejs.org/examples/js/controls/OrbitControls.js"></script>
+		
+		<link rel="stylesheet" type="text/css" href="js/weird3d_lib/weird3d.css"></link>
+		<script src="js/weird3d_lib/weird3d_maps.js"></script>
+		<script src="js/weird3d_lib/weird3d_charts.js"></script>
+		
+		<script src="data/chart_data.js"></script>
+		
+		<script src="js/map_chart.js"></script>
+	</head>
+	<body onload="start3d()">
+		<table style="width:100%;height:100%">
+			<tr>
+				<td style="text-align:center">
+					<div id="container_3d">
+					</div>
+					<div id="container_3d_us">
+					</div>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>
