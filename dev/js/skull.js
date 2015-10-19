@@ -76,7 +76,7 @@ Skull.Environment = function (opt) {
 					path + "b.jpg", path + "b.jpg",
 					path + "b.jpg", path + "b.jpg" ];
 		*/
-		var textureCube = THREE.ImageUtils.loadTextureCube( urls );
+		var textureCube = /*new THREE.CubeTextureLoader(urls);*/THREE.ImageUtils.loadTextureCube( urls );
 		textureCube.format = THREE.RGBFormat;
 		
 
