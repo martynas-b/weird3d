@@ -10,6 +10,7 @@ Skull.Environment = function (opt) {
 	//var skybox = {rad: 90};
 	//var d2r = Math.PI / 180;
 	var skull = null;
+	var lights = {l1: null, l2: null, l3: null};
 
 	var clock = new THREE.Clock();
 	
@@ -32,9 +33,9 @@ Skull.Environment = function (opt) {
 		Weird3d.Tools.set3DContainerClass(renderer.domElement);
 		
 		camera = new THREE.PerspectiveCamera( 45, opt.scene.size.width/opt.scene.size.height, 0.1, 4000 );
-		camera.position.x = 200;
+		camera.position.x = 100;
 		camera.position.y = 0;
-		camera.position.z = 400;
+		camera.position.z = 200;
 		
 		var controls = new THREE.OrbitControls( camera, renderer.domElement);	
 		//controls.minDistance = camera.position.distanceTo(scene.position);
@@ -42,17 +43,26 @@ Skull.Environment = function (opt) {
 		//controls.noZoom = true;
 		controls.target.set(0,0,0);
 		
-		scene.add( new THREE.AmbientLight( 0x333333 ) );
+		
+		//scene.add( new THREE.AmbientLight( 0x333333 ) );
 
-		var light = new THREE.DirectionalLight( 0xFFFFFF, 0.9 );
-		light.position.set( -1300, 700, 1240 );
+		lights.l1 = new THREE.DirectionalLight( 0xFFFFFF, 0.9 );
+		lights.l1.position.set( -1300, 700, 1240 );
+		scene.add( lights.l1 );
 
-		scene.add( light );
-
-		light = new THREE.DirectionalLight( 0xFFFFFF, 0.7 );
-		light.position.set( 1000, -500, -1200 );
-
-		scene.add( light );
+	
+		lights.l2 = new THREE.DirectionalLight( 0xFFFFFF, 0.9 );
+		lights.l2.position.set( 1000, -500, -1200 );
+		scene.add( lights.l2 );
+		
+		lights.l3 = new THREE.DirectionalLight( 0xFFFFFF, 0.9 );
+		lights.l3.position.set( 0, 1, 0 );
+		scene.add( lights.l3 );
+		
+	
+		loopLightning(lights.l1);
+		loopLightning(lights.l2);
+		loopLightning(lights.l3);
 		
 		
 		/*
@@ -63,12 +73,12 @@ Skull.Environment = function (opt) {
 				*/	
 		
 		
-		
+		/*
 		var path = "../dev/media/img/skybox/milky_way/";
 		var urls = [path + "0004.jpg", path + "0002.jpg",
 					path + "0006.jpg", path + "0005.jpg",
 					path + "0001.jpg", path + "0003.jpg" ];
-		
+		*/
 		
 		/*
 		var path = "../dev/media/img/skybox/sky_arizona/";
@@ -76,7 +86,8 @@ Skull.Environment = function (opt) {
 					path + "b.jpg", path + "b.jpg",
 					path + "b.jpg", path + "b.jpg" ];
 		*/
-		var textureCube = /*new THREE.CubeTextureLoader(urls);*/THREE.ImageUtils.loadTextureCube( urls );
+		/*
+		var textureCube = THREE.ImageUtils.loadTextureCube( urls );
 		textureCube.format = THREE.RGBFormat;
 		
 
@@ -93,7 +104,7 @@ Skull.Environment = function (opt) {
 
 		var sky = new THREE.Mesh( new THREE.BoxGeometry( 200, 200, 200 ), skyMaterial );
 		scene.add( sky );
-		
+		*/
 		
 		var loader = new THREE.JSONLoader();
 		loader.load( '../dev/media/json/skull_dec_0_1_join.json', function ( geometry, materials ) {
@@ -140,6 +151,26 @@ Skull.Environment = function (opt) {
 		};
 
 		render();
+	}
+	
+	function loopLightning (aLight) {
+	
+	
+		aLight.intensity = 0.9;
+		
+		setTimeout(function () {
+		
+		
+			aLight.intensity = 0;
+		
+		
+			setTimeout(function () {
+				loopLightning(aLight);
+			}, Math.random() * 5000);
+			
+		}, 200);
+		
+		
 	}
 	
 	function onWindowResize() {
