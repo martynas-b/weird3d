@@ -5,12 +5,14 @@ Skull.Environment = function (opt) {
 	this.options = null;
 	var scene = null;
 	var renderer = null;
-	var camera = null;
+	var camera = null, cameraTarget = null;
+	var cameraRadius = 200;
 	var container = null;
 	//var skybox = {rad: 90};
 	//var d2r = Math.PI / 180;
 	var skull = null;
 	var lights = {l1: null, l2: null, l3: null};
+	var particleSystem = null;
 
 	var clock = new THREE.Clock();
 	
@@ -33,9 +35,16 @@ Skull.Environment = function (opt) {
 		Weird3d.Tools.set3DContainerClass(renderer.domElement);
 		
 		camera = new THREE.PerspectiveCamera( 45, opt.scene.size.width/opt.scene.size.height, 0.1, 4000 );
-		camera.position.x = 100;
+		
+		var awayXZ = 50;
+		
+		camera.position.x = awayXZ;
 		camera.position.y = 0;
-		camera.position.z = 200;
+		camera.position.z = awayXZ;
+		
+		cameraTarget = new THREE.Vector3( 0, 0, 0 );
+		camera.lookAt(cameraTarget);
+		
 		
 		var controls = new THREE.OrbitControls( camera, renderer.domElement);	
 		//controls.minDistance = camera.position.distanceTo(scene.position);
@@ -106,20 +115,81 @@ Skull.Environment = function (opt) {
 		scene.add( sky );
 		*/
 		
+		var rand = function ( v ) {
+			return (v * (Math.random() - 0.5));
+		};
+		
+		var texture = THREE.ImageUtils.loadTexture( '../dev/media/img/snowflake1.png' );
+		
+		var particleSystemHeight = 100;
+		var numParticles = 10000,
+			width = 100,
+			height = particleSystemHeight,
+			depth = 100,
+			parameters = {
+				color: 0xFFFFFF,
+				height: particleSystemHeight,
+				radiusX: 2.5,
+				radiusZ: 2.5,
+				size: 100,
+				scale: 4.0,
+				opacity: 0.4,
+				speedH: 1.0,
+				speedV: 1.0
+			},
+			systemGeometry = new THREE.Geometry(),
+			systemMaterial = new THREE.ShaderMaterial({
+				uniforms: {
+						color:  { type: 'c', value: new THREE.Color( parameters.color ) },
+						height: { type: 'f', value: parameters.height },
+						elapsedTime: { type: 'f', value: 0 },
+						radiusX: { type: 'f', value: parameters.radiusX },
+						radiusZ: { type: 'f', value: parameters.radiusZ },
+						size: { type: 'f', value: parameters.size },
+						scale: { type: 'f', value: parameters.scale },
+						opacity: { type: 'f', value: parameters.opacity },
+						texture: { type: 't', value: texture },
+						speedH: { type: 'f', value: parameters.speedH },
+						speedV: { type: 'f', value: parameters.speedV }
+				},
+				vertexShader: document.getElementById( 'rain_vs' ).textContent,
+				fragmentShader: document.getElementById( 'rain_fs' ).textContent,
+				blending: THREE.AdditiveBlending,
+				transparent: true,
+				depthTest: false
+			});
+	 
+		for( var i = 0; i < numParticles; i++ ) {
+			var vertex = new THREE.Vector3(
+					rand( width ),
+					Math.random() * height,
+					rand( depth )
+				);
+
+			systemGeometry.vertices.push( vertex );
+		}
+
+
+		particleSystem = new THREE.Points( systemGeometry, systemMaterial );
+		particleSystem.position.y = -height/2;
+
+		scene.add( particleSystem );
+		
+				
 		var loader = new THREE.JSONLoader();
 		loader.load( '../dev/media/json/skull_dec_0_1_join.json', function ( geometry, materials ) {
-		
-			
+					
 			
 				var material = new THREE.MeshPhongMaterial({ color: 0xFFFFF0/*, specular:0xFFFFF0, envMap: textureCube*/});		
 
 				skull = new THREE.Mesh( geometry, material/*new THREE.MeshFaceMaterial( materials ) */);
-				skull.scale.set(0.5, 0.5, 0.5);
-				skull.position.y = -5;
+				
+				var scale = 0.3;
+				
+				skull.scale.set(scale, scale, scale);
+				skull.position.y = -10;
 					
 				scene.add( skull );
-				
-				
 				
 		} );
 		
@@ -145,6 +215,16 @@ Skull.Environment = function (opt) {
 				shader_material.uniforms.specular.value.copy(col);
 			}
 			*/
+			
+			
+			//var delta = clock.getDelta(),
+			elapsedTime = clock.getElapsedTime(),
+			//t = elapsedTime * 0.5;
+
+			particleSystem.material.uniforms.elapsedTime.value = elapsedTime * 10;
+
+			//camera.position.set( cameraRadius * Math.sin( t ), 0, cameraRadius * Math.cos( t ) );
+			//camera.lookAt( cameraTarget );
 			
 			
 			renderer.render(scene, camera);	
