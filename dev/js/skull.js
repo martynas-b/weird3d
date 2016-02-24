@@ -9,7 +9,6 @@ Skull.Environment = function (opt) {
 	var cameraRadius = 200;
 	var container = null;
 	//var skybox = {rad: 90};
-	//var d2r = Math.PI / 180;
 	var skull = null;
 	var lights = {l1: null, l2: null, l3: null};
 	var particleSystem = null;
@@ -48,7 +47,7 @@ Skull.Environment = function (opt) {
 		
 		camera = new THREE.PerspectiveCamera( 45, opt.scene.size.width/opt.scene.size.height, 0.1, 4000 );
 		
-		var awayXZ = 50;
+		var awayXZ = 60;
 		
 		camera.position.x = awayXZ;
 		camera.position.y = 0;
@@ -127,6 +126,44 @@ Skull.Environment = function (opt) {
 		scene.add( sky );
 		*/
 		
+		loadSkull();		
+		
+		loadEffect();	
+		
+		var render = function () {
+			requestAnimationFrame( render );
+			
+			if (particleSystem) {
+				elapsedTime = clock.getElapsedTime();
+				particleSystem.material.uniforms.elapsedTime.value = elapsedTime * 10;
+			}
+	
+			renderer.render(scene, camera);	
+		};
+
+		render();
+	}
+	
+	function loadSkull () {
+		var loader = new THREE.JSONLoader();
+		loader.load( '../dev/media/json/skull_dec_0_1_join.json', function ( geometry, materials ) {
+					
+			
+				var material = new THREE.MeshPhongMaterial({ color: 0xFFFFF0/*, specular:0xFFFFF0, envMap: textureCube*/});		
+
+				skull = new THREE.Mesh( geometry, material/*new THREE.MeshFaceMaterial( materials ) */);
+				
+				var scale = 0.3;
+				
+				skull.scale.set(scale, scale, scale);
+				skull.position.y = -10;
+					
+				scene.add( skull );
+				
+		} );	
+	}
+	
+	function loadEffect () {
 		var rand = function ( v ) {
 			return (v * (Math.random() - 0.5));
 		};
@@ -152,29 +189,11 @@ Skull.Environment = function (opt) {
 				opacity: 0.4,
 				speedH: effect.speedH,
 				speedV: effect.speedV
-			},
-			systemGeometry = new THREE.Geometry(),
-			systemMaterial = new THREE.ShaderMaterial({
-				uniforms: {
-						color:  { type: 'c', value: new THREE.Color( parameters.color ) },
-						height: { type: 'f', value: parameters.height },
-						elapsedTime: { type: 'f', value: 0 },
-						radiusX: { type: 'f', value: parameters.radiusX },
-						radiusZ: { type: 'f', value: parameters.radiusZ },
-						size: { type: 'f', value: parameters.size },
-						scale: { type: 'f', value: parameters.scale },
-						opacity: { type: 'f', value: parameters.opacity },
-						texture: { type: 't', value: texture },
-						speedH: { type: 'f', value: parameters.speedH },
-						speedV: { type: 'f', value: parameters.speedV }
-				},
-				vertexShader: document.getElementById( 'rain_vs' ).textContent,
-				fragmentShader: document.getElementById( 'rain_fs' ).textContent,
-				blending: THREE.AdditiveBlending,
-				transparent: true,
-				depthTest: false
-			});
-	 
+			};
+			
+			
+		var	systemGeometry = new THREE.Geometry();
+		
 		for( var i = 0; i < numParticles; i++ ) {
 			var vertex = new THREE.Vector3(
 					rand( width ),
@@ -184,73 +203,49 @@ Skull.Environment = function (opt) {
 
 			systemGeometry.vertices.push( vertex );
 		}
-
-
-		particleSystem = new THREE.Points( systemGeometry, systemMaterial );
-		particleSystem.position.y = -height/2;
-
-		scene.add( particleSystem );
-		
-				
-		var loader = new THREE.JSONLoader();
-		loader.load( '../dev/media/json/skull_dec_0_1_join.json', function ( geometry, materials ) {
-					
-			
-				var material = new THREE.MeshPhongMaterial({ color: 0xFFFFF0/*, specular:0xFFFFF0, envMap: textureCube*/});		
-
-				skull = new THREE.Mesh( geometry, material/*new THREE.MeshFaceMaterial( materials ) */);
-				
-				var scale = 0.3;
-				
-				skull.scale.set(scale, scale, scale);
-				skull.position.y = -10;
-					
-				scene.add( skull );
-				
-		} );
 		
 		
-		var render = function () {
-			requestAnimationFrame( render );
-			/*
-			var et = clock.getElapsedTime();
-			var angle = et * d2r;
+		var vsl = new Weird3d.Tools.ExternalShaderLoader();
+		vsl.load("../dev/js/shaders/rain.vs", function (aTxt) {
 			
-			if (cubes) {
-				cubes.rotation.z = (-1) * angle * 2;
+			var vst = aTxt;
+			
+			var fsl = new Weird3d.Tools.ExternalShaderLoader();
+			fsl.load("../dev/js/shaders/rain.fs", function (aTxt) {
+			
+				var fst = aTxt;			
 				
-				findMouseOver();
-			}
-			
-			if (shader_material) {
-				var h = (Math.sin(angle * 20) / 2) + 0.5;
-				var col = new THREE.Color();
-				col.setHSL(h, 0.5, 0.5);
-			
-				shader_material.uniforms.diffuse.value.copy(col);
-				shader_material.uniforms.specular.value.copy(col);
-			}
-			*/
-			
-			
-			//var delta = clock.getDelta(),
-			elapsedTime = clock.getElapsedTime(),
-			//t = elapsedTime * 0.5;
+				var	systemMaterial = new THREE.ShaderMaterial({
+						uniforms: {
+								color:  { type: 'c', value: new THREE.Color( parameters.color ) },
+								height: { type: 'f', value: parameters.height },
+								elapsedTime: { type: 'f', value: 0 },
+								radiusX: { type: 'f', value: parameters.radiusX },
+								radiusZ: { type: 'f', value: parameters.radiusZ },
+								size: { type: 'f', value: parameters.size },
+								scale: { type: 'f', value: parameters.scale },
+								opacity: { type: 'f', value: parameters.opacity },
+								texture: { type: 't', value: texture },
+								speedH: { type: 'f', value: parameters.speedH },
+								speedV: { type: 'f', value: parameters.speedV }
+						},
+						vertexShader: vst,
+						fragmentShader: fst,
+						blending: THREE.AdditiveBlending,
+						transparent: true,
+						depthTest: false
+					});
 
-			particleSystem.material.uniforms.elapsedTime.value = elapsedTime * 10;
+				particleSystem = new THREE.Points( systemGeometry, systemMaterial );
+				particleSystem.position.y = -height/2;
 
-			//camera.position.set( cameraRadius * Math.sin( t ), 0, cameraRadius * Math.cos( t ) );
-			//camera.lookAt( cameraTarget );
-			
-			
-			renderer.render(scene, camera);	
-		};
-
-		render();
+				scene.add( particleSystem );				
+		
+			});		
+		});
 	}
 	
-	function loopLightning (aLight) {
-	
+	function loopLightning (aLight) {	
 	
 		aLight.intensity = 0.9;
 		
@@ -264,9 +259,7 @@ Skull.Environment = function (opt) {
 				loopLightning(aLight);
 			}, Math.random() * 5000);
 			
-		}, 200);
-		
-		
+		}, 200);		
 	}
 	
 	function onWindowResize() {

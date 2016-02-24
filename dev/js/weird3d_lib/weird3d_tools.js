@@ -39,3 +39,16 @@ Weird3d.Tools.extShaderLoader = function (aCallback, aUrl) {
 		xhr.send(null);
 	}
 };
+
+Weird3d.Tools.ExternalShaderLoader = function () {
+	this.load = function (aUrl, aCallback) {
+		if (aCallback && aUrl && (aUrl !== "")) {
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET", aUrl, true);
+			xhr.onload = function() {
+				aCallback(this.responseText);
+			}
+			xhr.send(null);
+		}
+	};
+};
