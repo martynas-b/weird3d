@@ -13,6 +13,18 @@ Skull.Environment = function (opt) {
 	var skull = null;
 	var lights = {l1: null, l2: null, l3: null};
 	var particleSystem = null;
+	var effects = {
+		rain: {
+			texture: '../dev/media/img/raindrop1.png',
+			speedH: 0.05,
+			speedV: 3.0
+		},
+		snow: {
+			texture: '../dev/media/img/snowflake1.png',
+			speedH: 1.0,
+			speedV: 1.0
+		}
+	}
 
 	var clock = new THREE.Clock();
 	
@@ -119,7 +131,11 @@ Skull.Environment = function (opt) {
 			return (v * (Math.random() - 0.5));
 		};
 		
-		var texture = THREE.ImageUtils.loadTexture( '../dev/media/img/snowflake1.png' );
+		var effect = effects.rain;
+		
+		
+		var texture = THREE.ImageUtils.loadTexture( effect.texture );
+		texture.flipY = false;
 		
 		var particleSystemHeight = 100;
 		var numParticles = 10000,
@@ -134,8 +150,8 @@ Skull.Environment = function (opt) {
 				size: 100,
 				scale: 4.0,
 				opacity: 0.4,
-				speedH: 1.0,
-				speedV: 1.0
+				speedH: effect.speedH,
+				speedV: effect.speedV
 			},
 			systemGeometry = new THREE.Geometry(),
 			systemMaterial = new THREE.ShaderMaterial({
