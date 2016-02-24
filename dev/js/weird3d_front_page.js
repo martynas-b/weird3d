@@ -246,11 +246,16 @@ Weird3DFP.Environment = function (opt) {
 				img: "terrain.jpg",
 				link: "/terrain",
 				title: "San Francisco terrain"
-			},
+			},			
 			{
 				img: "terr_vr.jpg",
 				link: "/vr-on-real-terrain",
 				title: "VR on real terrain"
+			},			
+			{
+				img: "skull.jpg",
+				link: "/skull-in-the-rain",
+				title: "Skull in the rain"
 			}
 		];
 				
