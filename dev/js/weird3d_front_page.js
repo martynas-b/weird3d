@@ -250,7 +250,7 @@ Weird3DFP.Environment = function (opt) {
 			{
 				img: "terr_vr.jpg",
 				link: "/vr-on-real-terrain",
-				title: "VR on real terrain"
+				title: "VR on a real terrain"
 			},			
 			{
 				img: "skull.jpg",
